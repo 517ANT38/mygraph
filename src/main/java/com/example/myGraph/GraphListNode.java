@@ -8,7 +8,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class GraphListNode implements Graph{
+public class GraphListNode {
 
     private Map<Node,Set<Node>> map ;  
 
@@ -53,38 +53,7 @@ public class GraphListNode implements Graph{
 
 
 
-    @Override
-    public Graph toGraphAdjacencyMatrix() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'toGraphAdjacencyMatrix'");
-    }
-
-
-
-
-    @Override
-    public Graph toGraphIncidentMatrix() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'toGraphIncidentMatrix'");
-    }
-
-
-
-
-    @Override
-    public Graph toGraphListNode() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'toGraphListNode'");
-    }
-
-
-
-
-    @Override
-    public Graph toListEdge() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'toListEdge'");
-    }
+  
 
     
 }
