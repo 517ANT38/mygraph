@@ -21,6 +21,11 @@ public class NodeWeight {
         
         return node.hashCode();
     }
+
+    public NodeWeight(NodeWeight n){
+        this(n.node,n.w);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)

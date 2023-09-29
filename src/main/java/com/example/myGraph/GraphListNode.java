@@ -2,16 +2,15 @@ package com.example.myGraph;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
@@ -322,11 +321,62 @@ public class GraphListNode {
             .max().orElse(0);
     }
 
-    public double getRadius(){
-        var radius = Double.MAX_VALUE;
-        Queue<Node> queue = new ArrayDeque<>();
-        for(var i: map.keySet()){
+
+    
+    public double getD(){
+       
+        List<Double> r = new ArrayList<>();
+        
+        if(map.isEmpty())
+            throw new RuntimeException("Graph is empty");
+        var m = helper(map);
+        while(!m.isEmpty()){
+            var ent = min(m);
+            m.remove(ent.getKey());
+           
+            r.add(ent.getValue());
+            var set = map.get(ent.getKey());
+            for (NodeWeight nodeWeight : set) {
+
+                var n2 = nodeWeight.getNode();
+                if(m.containsKey(n2)){
+                    var d = m.get(n2);
+                    var sum = nodeWeight.getW() + ent.getValue();                    
+                    m.put(n2, Math.min(d,sum));
+                }
+            }
             
         }
+        
+        return r.stream().mapToDouble(x->x).max().orElse(0.0);
+        
+    }
+
+    private static Entry<Node,Double> min(Map<Node,Double> m){
+        return m.entrySet().stream()
+                    .min((x,y) -> x.getValue() > y.getValue() ? 1 : 0)
+                    .get();
+    }
+
+    private static Map<Node,Double> helper(Map<Node,Set<NodeWeight>> map){
+        var keySet = map.keySet();
+        var n = List.copyOf(keySet).get(0);
+        var set = map.get(n);
+        Map<Node,Double> m = new HashMap<>();
+    
+        for (var key : keySet) {
+            
+            for (NodeWeight nodeWeight : set) {
+                var n1 = nodeWeight.getNode();
+                if(n.equals(key))continue;
+                if(n1.equals(key)){
+                    m.put(key, nodeWeight.getW());
+                    continue;
+                }
+                m.put(key, Double.MAX_VALUE);
+            }
+            
+        }
+        return m;
     }
 }
