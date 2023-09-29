@@ -2,13 +2,16 @@
 package com.example.myGraph;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * NodeWeight
  */
 
 @AllArgsConstructor
+@Getter
+@Setter
 public class NodeWeight {
 
     private Node node;

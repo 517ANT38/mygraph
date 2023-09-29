@@ -262,7 +262,14 @@ public class GraphListNode {
         var set = map.get(n1);
         if(!set.contains(n2))
             throw new IllegalArgumentException("Not node n2");
-        return set.
+        double res=0;
+        for (NodeWeight nodeWeight : set) {
+            if(nodeWeight.getNode().equals(n2)){
+                res = nodeWeight.getW();
+                break;
+            }
+        }
+        return res;
     }
 
     public double getWeight(int x,int y){
@@ -270,7 +277,17 @@ public class GraphListNode {
         var n2 = new Node(y);
         if(!map.containsKey(n1))
             throw new IllegalArgumentException("Not node n1");
-        return map.get(n1).contains(n2);
+        var set = map.get(n1);
+        if(!set.contains(n2))
+            throw new IllegalArgumentException("Not node n2");
+        double res=0;
+        for (NodeWeight nodeWeight : set) {
+            if(nodeWeight.getNode().equals(n2)){
+                res = nodeWeight.getW();
+                break;
+            }
+        }
+        return res;
     }
 
     
