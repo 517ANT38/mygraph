@@ -2,10 +2,14 @@ package com.example.myGraph;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -244,16 +248,25 @@ public class GraphListNode {
 
     public boolean isAdjacent(Node n1,Node n2){
         if(!map.containsKey(n1))
-            throw new IllegalArgumentException("Not node n1");
-        return map.get(n1).contains(n2);
+            return false;
+       for (var i: map.get(n1)){
+            if(i.getNode().equals(n2))
+                return true;
+        }
+        return false;
     }
 
     public boolean isAdjacent(int x,int y){
         var n1 = new Node(x);
         var n2 = new Node(y);
         if(!map.containsKey(n1))
-            throw new IllegalArgumentException("Not node n1");
-        return map.get(n1).contains(n2);
+            return false;
+        for (var i: map.get(n1)){
+            if(i.getNode().equals(n2))
+                return true;
+        }
+        return false;
+        
     }
   
     public double getWeight(Node n1,Node n2){
@@ -264,7 +277,7 @@ public class GraphListNode {
             throw new IllegalArgumentException("Not node n2");
         double res=0;
         for (NodeWeight nodeWeight : set) {
-            if(nodeWeight.getNode().equals(n2)){
+            if(nodeWeight.getNode().equals(n2)){// сравнивая с node
                 res = nodeWeight.getW();
                 break;
             }
@@ -282,7 +295,7 @@ public class GraphListNode {
             throw new IllegalArgumentException("Not node n2");
         double res=0;
         for (NodeWeight nodeWeight : set) {
-            if(nodeWeight.getNode().equals(n2)){
+            if(nodeWeight.getNode().equals(n2)){// сравнивая с node
                 res = nodeWeight.getW();
                 break;
             }
@@ -290,5 +303,30 @@ public class GraphListNode {
         return res;
     }
 
+    public List<Integer> getrRowNode(){
+        return map.values().stream()
+            .map(x -> x.size())
+            .sorted()
+            .toList();
+    }
     
+    public int getMinRow(){
+        return map.values().stream()
+            .mapToInt(x -> x.size())
+            .min().orElse(0);
+    }
+
+    public int getMaxRow(){
+        return map.values().stream()
+            .mapToInt(x -> x.size())
+            .max().orElse(0);
+    }
+
+    public double getRadius(){
+        var radius = Double.MAX_VALUE;
+        Queue<Node> queue = new ArrayDeque<>();
+        for(var i: map.keySet()){
+            
+        }
+    }
 }
