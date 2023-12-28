@@ -2,15 +2,16 @@ package com.example.myGraph;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
@@ -64,9 +65,7 @@ public class GraphListNode {
     }
     public int getCountEdge(){
         
-        return map.values().stream()
-                .mapToInt(x -> x.size())
-                .sum()/2;
+        return map.size()*((map.size()-1)/2);
     }
 
     public static GraphListNode createGraphFromListNode(InputStream stream){
@@ -163,9 +162,21 @@ public class GraphListNode {
         var n1 = new Node(x);
         var n2 = new Node(y);
         var set = map.getOrDefault(n1, new HashSet<>());
-        if(!set.remove(n2))
+        NodeWeight nw = null;
+        for(var i:set){
+            if(i.getNode().equals(n2)){
+                nw = i;
+            }
+        }
+        if(nw == null)
             throw new IllegalArgumentException("Not edge");
+        set.remove(nw);
         var set2 = map.get(n2);
+        for(var i:set2){
+            if(i.getNode().equals(n1)){
+                nw = i;
+            }
+        }
         set2.remove(n1);
     }
 
@@ -306,7 +317,7 @@ public class GraphListNode {
         return map.values().stream()
             .map(x -> x.size())
             .sorted()
-            .toList();
+            .collect(Collectors.toList());
     }
     
     public int getMinRow(){
@@ -323,60 +334,56 @@ public class GraphListNode {
 
 
     
-    public double getD(){
+    public double getDistanse(Node s,Node e){
        
-        List<Double> r = new ArrayList<>();
+        
         
         if(map.isEmpty())
             throw new RuntimeException("Graph is empty");
-        var m = helper(map);
-        while(!m.isEmpty()){
-            var ent = min(m);
-            m.remove(ent.getKey());
-           
-            r.add(ent.getValue());
-            var set = map.get(ent.getKey());
-            for (NodeWeight nodeWeight : set) {
+        
+        double[] dist = new double[map.size()+1];
+        boolean[] marked = new boolean[map.size()+1];
 
-                var n2 = nodeWeight.getNode();
-                if(m.containsKey(n2)){
-                    var d = m.get(n2);
-                    var sum = nodeWeight.getW() + ent.getValue();                    
-                    m.put(n2, Math.min(d,sum));
+        for (int i = 0; i < dist.length; i++) {
+            dist[i] = Double.POSITIVE_INFINITY;
+        }
+
+        Queue<PriorElem> queue = new ArrayDeque<>();
+        dist[s.getX()] = 0.0;
+        queue.add(new PriorElem(0.0,s));
+
+        while (!queue.isEmpty()) {
+            var vi = queue.poll();
+            var v = vi.n.getX();
+            if(marked[v])
+                continue;
+            marked[v] = true;
+            for(var item: map.get(vi.n)){
+                var node = item.getNode();
+                var w = node.getX();
+                if(dist[w] > dist[v] + item.getW()){
+                    dist[w] = dist[v] + item.getW();					
+					queue.add(new PriorElem(dist[w], node));
                 }
             }
-            
         }
-        
-        return r.stream().mapToDouble(x->x).max().orElse(0.0);
+
+        // System.out.println(Arrays.toString(dist));
+        return dist[e.getX()];
         
     }
 
-    private static Entry<Node,Double> min(Map<Node,Double> m){
-        return m.entrySet().stream()
-                    .min((x,y) -> x.getValue() > y.getValue() ? 1 : 0)
-                    .get();
-    }
+    private static class PriorElem{
+        
+        private Node n;
+        public double v;
 
-    private static Map<Node,Double> helper(Map<Node,Set<NodeWeight>> map){
-        var keySet = map.keySet();
-        var n = List.copyOf(keySet).get(0);
-        var set = map.get(n);
-        Map<Node,Double> m = new HashMap<>();
+        public PriorElem(double v, Node n){
+            this.n = n;
+            this.v = v;
+        }
+    } 
+
+
     
-        for (var key : keySet) {
-            
-            for (NodeWeight nodeWeight : set) {
-                var n1 = nodeWeight.getNode();
-                if(n.equals(key))continue;
-                if(n1.equals(key)){
-                    m.put(key, nodeWeight.getW());
-                    continue;
-                }
-                m.put(key, Double.MAX_VALUE);
-            }
-            
-        }
-        return m;
-    }
 }

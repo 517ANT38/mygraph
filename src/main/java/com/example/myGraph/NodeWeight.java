@@ -4,6 +4,7 @@ package com.example.myGraph;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * NodeWeight
@@ -12,6 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class NodeWeight {
 
     private Node node;
