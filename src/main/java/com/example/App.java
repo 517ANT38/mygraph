@@ -2,10 +2,7 @@ package com.example;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Writer;
-
 import com.example.myGraph.GraphListNode;
 import com.example.myGraph.Node;
 
@@ -19,7 +16,11 @@ public class App
     {
         var  g = GraphListNode.createGraphFromListNode(new FileInputStream(new File("test")));
   
-        System.out.println(g.getDistanse(new Node(8), new Node(1)));
+        // System.out.println(g.getDistanse(new Node(8), new Node(1)));
+        System.out.println(g.getD());
+        System.out.println(g.getR());
+        System.out.println(g.isConnected());
+        System.out.println(g.isEulerian());
         // g.graphListNodeToOut(System.out);
         // g.graphMatrixAdvecedToOut(System.out);
     }

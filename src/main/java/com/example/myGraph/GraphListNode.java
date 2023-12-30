@@ -333,11 +333,46 @@ public class GraphListNode {
     }
 
 
+    public double getR(){
+        double d = Double.MAX_VALUE;
+        for(var node: map.keySet()){
+            d = Math.min(getEccentricity(node), d);
+        }
+        return d;
+    }
+
+    public double getD(){
+        double d = -1;
+        for(var node: map.keySet()){
+            var dist = distances(node);
+            for (int i = 1; i < dist.length; i++) {
+                d = Math.max(dist[i], d);
+            }
+        }
+        return d;
+    }
+
+    public double getEccentricity(Node n){
+        double d = -1;
+        var ds = distances(n);
+        for (int i = 1; i < ds.length; i++) {
+                d = Math.max(ds[i], d);
+        }
+        return d;
+    }
+
     
     public double getDistanse(Node s,Node e){
        
+        var dist = distances(s);
+       
+        // System.out.println(Arrays.toString(dist));
+        return dist[e.getX()];
         
-        
+    }
+
+    private double[] distances(Node s){
+         
         if(map.isEmpty())
             throw new RuntimeException("Graph is empty");
         
@@ -348,42 +383,83 @@ public class GraphListNode {
             dist[i] = Double.POSITIVE_INFINITY;
         }
 
-        Queue<PriorElem> queue = new ArrayDeque<>();
+        Queue<Node> queue = new ArrayDeque<>();
         dist[s.getX()] = 0.0;
-        queue.add(new PriorElem(0.0,s));
+        queue.add(s);
 
         while (!queue.isEmpty()) {
             var vi = queue.poll();
-            var v = vi.n.getX();
+            var v = vi.getX();
             if(marked[v])
                 continue;
             marked[v] = true;
-            for(var item: map.get(vi.n)){
+            for(var item: map.get(vi)){
                 var node = item.getNode();
                 var w = node.getX();
                 if(dist[w] > dist[v] + item.getW()){
                     dist[w] = dist[v] + item.getW();					
-					queue.add(new PriorElem(dist[w], node));
+					queue.add(node);
                 }
             }
         }
 
-        // System.out.println(Arrays.toString(dist));
-        return dist[e.getX()];
-        
+        return dist;
     }
 
-    private static class PriorElem{
-        
-        private Node n;
-        public double v;
+    public boolean isConnected(){
+        if(map.isEmpty())
+            throw new RuntimeException("Graph is empty");
 
-        public PriorElem(double v, Node n){
-            this.n = n;
-            this.v = v;
+        boolean[] visited = new boolean[map.size() + 1];
+        Node v = map.keySet().stream().findFirst().get();
+
+        for(var node: map.keySet()) {
+            var set = map.get(node);
+            if (set.size() != 0) {
+                v = node;
+                break;
+            }
         }
-    } 
 
+        helperDfs(v, visited);
 
+        for(var node: map.keySet()) {
+            var set = map.get(node);
+            if (!visited[node.getX()] && set.size() > 0) {
+                return false;
+            }
+        }
+
+        return true;
+
+    }
+
+    private void helperDfs(Node node, boolean[] visited){
+        visited[node.getX()] = true;
+        var setIter = map.get(node).iterator();
+        while (setIter.hasNext()) {
+            var n = setIter.next().getNode();
+                
+            if(!visited[n.getX()]){
+                helperDfs(n, visited);
+            }
+        }
+    }
     
+    public int isEulerian() {
+        if (isConnected() == false)
+            return 0;
+
+        int odd = 0;
+        for(var node: map.keySet()){
+            var set = map.get(node);
+            if (set.size() % 2 != 0)
+                odd++;
+        }
+
+        if (odd > 2)
+            return 0;
+
+        return (odd == 0) ? 2 : 1;
+    }
 }
