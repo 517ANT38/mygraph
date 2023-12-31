@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.Set;
@@ -461,5 +460,22 @@ public class GraphListNode {
             return 0;
 
         return (odd == 0) ? 2 : 1;
+    }
+
+    public boolean isPath(int...nodes){
+        var curr = new Node(nodes[0]);
+        boolean fl = true;
+        for (int i = 1; i < nodes.length; i++) {
+            Node tmpNode = new Node(nodes[i]);
+            var set = map.get(curr);
+            fl = set.stream()
+                .map(NodeWeight::getNode)
+                .anyMatch(x -> x.equals(tmpNode));
+            if(!fl){
+                break;
+            }
+            curr = tmpNode;
+        }
+        return fl;
     }
 }

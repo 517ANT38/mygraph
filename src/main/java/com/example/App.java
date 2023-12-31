@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import com.example.myGraph.GraphListNode;
-import com.example.myGraph.Node;
+
 
 /**
  * Hello world!
@@ -21,6 +21,7 @@ public class App
         System.out.println(g.getR());
         System.out.println(g.isConnected());
         System.out.println(g.isEulerian());
+        System.out.println(g.isPath(1,6,2,8));
         // g.graphListNodeToOut(System.out);
         // g.graphMatrixAdvecedToOut(System.out);
     }
