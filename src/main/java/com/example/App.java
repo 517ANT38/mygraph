@@ -22,7 +22,9 @@ public class App
         System.out.println(g.isConnected());
         System.out.println(g.isEulerian());
         System.out.println(g.isPath(1,6,2,8));
-        // g.graphListNodeToOut(System.out);
+        System.out.println(g.getWeight(1, 6));
+        // g.removeEdge(1, 6);
+        g.graphListNodeToOut(System.out);
         // g.graphMatrixAdvecedToOut(System.out);
     }
 }

@@ -56,6 +56,7 @@ public class GraphListNode {
             }
 
         }   
+        sc.close();
         return new GraphListNode(map);
     }
 
@@ -93,7 +94,7 @@ public class GraphListNode {
             map.put(node2, set2);
             map.put(node1, set1);
         }   
-        
+        sc.close();
         return new GraphListNode(map);
 
     }
@@ -149,34 +150,32 @@ public class GraphListNode {
         }
     }
 
+    private NodeWeight getNw(Node x, Set<NodeWeight> set){
+        NodeWeight nw = null;
+        for (var nodeWeight : set) {
+            if(nodeWeight.getNode().equals(x)){
+                nw = nodeWeight;
+                break;
+            }
+        }
+        return nw;
+    }
+
     public void removeEdge(Node x, Node y){
         var set = map.getOrDefault(x, new HashSet<>());
-        if(!set.remove(y))
+        
+        if(!set.remove(getNw(y, set)))
             throw new IllegalArgumentException("Not edge");
         var set2 = map.get(y);
-        set2.remove(x);
+        
+        if(!set2.remove(getNw(x, set2)))
+            throw new IllegalArgumentException("Not edge");
     }
 
     public void removeEdge(int x, int y){
         var n1 = new Node(x);
         var n2 = new Node(y);
-        var set = map.getOrDefault(n1, new HashSet<>());
-        NodeWeight nw = null;
-        for(var i:set){
-            if(i.getNode().equals(n2)){
-                nw = i;
-            }
-        }
-        if(nw == null)
-            throw new IllegalArgumentException("Not edge");
-        set.remove(nw);
-        var set2 = map.get(n2);
-        for(var i:set2){
-            if(i.getNode().equals(n1)){
-                nw = i;
-            }
-        }
-        set2.remove(n1);
+        removeEdge(n1, n2);
     }
 
     public void addNode(int x){
@@ -282,34 +281,17 @@ public class GraphListNode {
         if(!map.containsKey(n1))
             throw new IllegalArgumentException("Not node n1");
         var set = map.get(n1);
-        if(!set.contains(n2))
+        var rv = getNw(n2, set);
+        if(!set.contains(rv))
             throw new IllegalArgumentException("Not node n2");
-        double res=0;
-        for (NodeWeight nodeWeight : set) {
-            if(nodeWeight.getNode().equals(n2)){// сравнивая с node
-                res = nodeWeight.getW();
-                break;
-            }
-        }
-        return res;
+        
+        return rv.getW();
     }
 
     public double getWeight(int x,int y){
         var n1 = new Node(x);
         var n2 = new Node(y);
-        if(!map.containsKey(n1))
-            throw new IllegalArgumentException("Not node n1");
-        var set = map.get(n1);
-        if(!set.contains(n2))
-            throw new IllegalArgumentException("Not node n2");
-        double res=0;
-        for (NodeWeight nodeWeight : set) {
-            if(nodeWeight.getNode().equals(n2)){// сравнивая с node
-                res = nodeWeight.getW();
-                break;
-            }
-        }
-        return res;
+        return getWeight(n1, n2);
     }
 
     public List<Integer> getrRowNode(){
