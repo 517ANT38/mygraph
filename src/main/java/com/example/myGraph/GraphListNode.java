@@ -13,10 +13,11 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.SneakyThrows;
+import lombok.ToString;
 
 
 public class GraphListNode {
@@ -35,27 +36,34 @@ public class GraphListNode {
         Map<Node,Set<NodeWeight>> map = new HashMap<>();        
         Scanner sc = new Scanner(stream);
         int n = Integer.parseInt(sc.nextLine());
-        for (int i = 0; i < n; i++) {   
-            String[] arrStr = sc.nextLine().split(" ");            
-            Node node1 = new Node(i);
-            for (int j = 0; j < arrStr.length; j++) {    
-
-                if(i == j) continue;    
-
-                var node2 = new Node(j);
-                var v = Double.parseDouble(arrStr[j]);
-
-                var set1 = map.getOrDefault(node1, new HashSet<>());
-                var set2 = map.getOrDefault(node2, new HashSet<>());   
-
-                set1.add(new NodeWeight(node2,v));    
-                set2.add(new NodeWeight(node1,v));
-                
-                map.put(node2, set2);
-                map.put(node1, set1);
-            }
+        for (int i = 1; i < n + 1; i++) {           
+            
 
         }   
+        for (int i = 1; i < n + 1; i++) {
+            Node node1 = new Node(i);
+            
+            String[] arrStr = sc.nextLine().split(" "); 
+            for (int j = 0; j < arrStr.length; j++) {
+                if(arrStr[j].equals("0") || arrStr[j].equals("0.0")){
+                    continue;
+                }
+                var v = Double.parseDouble(arrStr[j]);
+                var node2 = new Node(j + 1);
+                
+                var set1 = map.getOrDefault(node1, new HashSet<>());
+                var set2 = map.getOrDefault(node2, new HashSet<>());
+
+                set2.add(new NodeWeight(node1, v));
+                set1.add(new NodeWeight(node2, v));
+
+                map.put(node1,set1);
+                map.put(node2,set2);
+
+            }  
+            // map.put(node, new HashSet<>());
+        }
+             
         sc.close();
         return new GraphListNode(map);
     }
@@ -116,19 +124,19 @@ public class GraphListNode {
         Set<Edge> set = new HashSet<>();
         for (var item : map.entrySet()) {
             var key = item.getKey();
-            var edge = new Edge();
-            edge.setNode1(key);
+            
             for (var it : item.getValue()) {
 
-                edge.setNode2(it.getNode());
-                if(set.contains(edge)) continue;
-                set.add(edge);
-                var s = key.getX() + " " + it.getNode().getX() + " " + it.getW() + "\n";
-                w.write(s.getBytes());
+               set.add(new Edge(key,it.getNode(),it.getW()));
+               
             }
 
         }
-        
+        for (Edge edge : set) {
+            var s = edge.node1.getX() + " " + edge.node2.getX() + " " + edge.w + "\n";
+                w.write(s.getBytes());
+        }
+        w.close();
     }
 
     @SneakyThrows
@@ -148,6 +156,7 @@ public class GraphListNode {
             w.write(s.getBytes());
 
         }
+        w.close();
     }
 
     private NodeWeight getNw(Node x, Set<NodeWeight> set){
@@ -227,14 +236,23 @@ public class GraphListNode {
     }
     
     @NoArgsConstructor
+    @AllArgsConstructor
     @Getter
-    @Setter
+    @ToString
     private static class Edge{
         private  Node node1;
         private Node node2;
+        private double w;
         @Override
         public int hashCode() {
-            return node1.getX() + node2.getX();
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((node1 == null) ? 0 : node1.hashCode())+ ((node2 == null) ? 0 : node2.hashCode());
+            // result = prime * result + ((node2 == null) ? 0 : node2.hashCode());
+            long temp;
+            temp = Double.doubleToLongBits(w);
+            result = prime * result + (int) (temp ^ (temp >>> 32));
+            return result;
         }
         @Override
         public boolean equals(Object obj) {
@@ -248,9 +266,19 @@ public class GraphListNode {
             if (node1 == null) {
                 if (other.node1 != null)
                     return false;
-            } 
+            } else if (!node1.equals(other.node1) && !node1.equals(other.node2))
+                return false;
+              else            
+            if (node2 == null) {
+                if (other.node2 != null)
+                    return false;
+            } else if (!node2.equals(other.node2) && !node2.equals(other.node1))
+                return false;
+            if (Double.doubleToLongBits(w) != Double.doubleToLongBits(other.w))
+                return false;
             return true;
         }
+        
 
     }
 
@@ -460,4 +488,28 @@ public class GraphListNode {
         }
         return fl;
     }
+
+    public boolean isTree(){
+        if (map.size() == countEdge() + 1 ) {
+            if (isConnected()) {
+              return true;
+            }
+        }
+        return false;
+    }
+
+    private int countEdge(){
+        Set<Edge> edges = new HashSet<>();
+        for (var ent : map.entrySet()) {
+            var tmpEdges = ent.getValue().stream()
+                .map(x -> new Edge(ent.getKey(), x.getNode(), x.getW()))
+                .collect(Collectors.toSet());
+            edges.addAll(tmpEdges);
+        }
+        
+        return edges.size();
+    }
+
+   
+    
 }
