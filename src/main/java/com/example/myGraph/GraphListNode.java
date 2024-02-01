@@ -498,6 +498,16 @@ public class GraphListNode {
         return false;
     }
 
+    public boolean isFooFullSubgraph(){
+        if(map.size() < 4)
+            return false;
+        for(var i: map.entrySet()){
+            var node = i.getKey();
+            
+        }
+    }
+
+
     private int countEdge(){
         Set<Edge> edges = new HashSet<>();
         for (var ent : map.entrySet()) {
