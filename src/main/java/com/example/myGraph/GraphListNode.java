@@ -499,14 +499,34 @@ public class GraphListNode {
     }
 
     public boolean isFooFullSubgraph(){
-        if(map.size() < 4)
-            return false;
-        for(var i: map.entrySet()){
-            var node = i.getKey();
-            
-        }
+        return false;
     }
 
+    private boolean helperIsFooFull(Node n){
+        return false;
+    }
+
+    public Map<Node,Integer> sequentialColoring() {
+        Map<Node,Integer> nc = new HashMap<>();
+        List<Node> sk = map.keySet().stream()
+            .sorted((x,y) -> y.getX() - x.getX())
+            .collect(Collectors.toList());
+        for (var v : sk) {
+            Set<Integer> useColors = new HashSet<>();
+            for(var nv : map.get(v)){
+                var node = nv.getNode();
+                if(nc.containsKey(node)){
+                    useColors.add(nc.get(node));
+                }
+            }
+
+            for (int i = 1; i <= sk.size(); i++) {
+                if(!useColors.contains(i))
+                    nc.put(v, i);
+            }
+        } 
+        return nc;     
+    }
 
     private int countEdge(){
         Set<Edge> edges = new HashSet<>();
