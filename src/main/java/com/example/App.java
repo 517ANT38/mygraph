@@ -26,7 +26,7 @@ public class App
         // // g.removeEdge(1, 6);
         // g.graphListNodeToOut(System.out);
         // g.graphMatrixAdvecedToOut(System.out);
-        System.out.println(g.isTree());
+        System.out.println(g.sequentialColoring());
 
     }
 }
