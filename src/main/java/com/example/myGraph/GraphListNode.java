@@ -3,6 +3,7 @@ package com.example.myGraph;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
@@ -499,10 +501,30 @@ public class GraphListNode {
     }
 
     public boolean isFooFullSubgraph(){
+        if(map.size() < 3)
+            return false;
+        for(var key: map.keySet()){
+            var lst = map.get(key).stream()
+                .map(x->x.getNode())
+                .toList();
+            if(helperIsFooFull(lst, new ArrayList<>()))
+                return true;
+            
+        }
         return false;
     }
 
-    private boolean helperIsFooFull(Node n){
+    private boolean helperIsFooFull(List<Node> nodes,List<Node> saves){
+        for (Node node :nodes) {
+            var lst = map.get(node).stream()
+                .map(x -> x.getNode())
+                .toList();
+            if(lst.containsAll(saves)){
+                saves.add(node);
+                if(saves.size() == 4) return true;
+                return helperIsFooFull(lst, saves);
+            }
+        }
         return false;
     }
 
