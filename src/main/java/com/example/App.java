@@ -7,7 +7,7 @@ import com.example.myGraph.GraphListNode;
 
 
 /**
- * Hello world!
+ * My graph
  *
  */
 public class App 
